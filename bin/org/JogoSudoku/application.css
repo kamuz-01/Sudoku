@@ -1,0 +1,291 @@
+.root {
+	-fx-font-family: "Segoe UI", "Trebuchet MS", "Verdana", sans-serif;
+}
+
+.border-pane {
+	-fx-background-color:
+		radial-gradient(center 25% 20%, radius 75%, rgba(96, 134, 184, 0.24), transparent),
+		linear-gradient(to bottom right, #0f172a, #16213e 55%, #0f213f);
+}
+
+.hero-bar {
+	-fx-background-color: linear-gradient(to right, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+	-fx-border-color: rgba(255,255,255,0.10);
+	-fx-border-width: 0 0 1 0;
+}
+
+.content-area {
+	-fx-background-color: transparent;
+}
+
+.card {
+	-fx-background-color: rgba(9, 16, 32, 0.86);
+	-fx-background-radius: 28;
+	-fx-border-color: rgba(255,255,255,0.08);
+	-fx-border-radius: 28;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.40), 36, 0.20, 0, 14);
+}
+
+.board-card {
+	-fx-min-width: 720px;
+}
+
+.side-card {
+	-fx-min-width: 340px;
+	-fx-max-width: 340px;
+}
+
+.app-title {
+	-fx-text-fill: #4b35f8;
+	-fx-font-size: 44px;
+	-fx-font-weight: 800;
+	-fx-letter-spacing: 0.5px;
+}
+
+.app-subtitle {
+	-fx-text-fill: #005278;
+	-fx-font-size: 14px;
+}
+
+.section-kicker {
+	-fx-text-fill: #f59e0b;
+	-fx-font-size: 11px;
+	-fx-font-weight: 700;
+	-fx-letter-spacing: 1.2px;
+	-fx-text-transform: uppercase;
+}
+
+.section-title {
+	-fx-text-fill: #004386;
+	-fx-font-size: 18px;
+	-fx-font-weight: 700;
+}
+
+.section-badge {
+	-fx-background-color: rgba(82, 129, 255, 0.18);
+	-fx-background-radius: 999;
+	-fx-border-color: rgba(126, 170, 255, 0.36);
+	-fx-border-radius: 999;
+	-fx-text-fill: #d97706;
+	-fx-padding: 6 12 6 12;
+}
+
+.hint-text {
+	-fx-text-fill: #94a3b8;
+	-fx-font-size: 12px;
+	-fx-line-spacing: 2px;
+}
+
+.status-pill {
+	-fx-background-radius: 999;
+	-fx-border-radius: 999;
+	-fx-padding: 8 14 8 14;
+	-fx-text-fill: #0f172a;
+	-fx-font-weight: 700;
+	-fx-font-size: 13px;
+}
+
+.status-muted {
+	-fx-background-color: rgba(148, 163, 184, 0.18);
+	-fx-border-color: rgba(148, 163, 184, 0.45);
+}
+
+.status-warning {
+	-fx-background-color: rgba(245, 158, 11, 0.20);
+	-fx-border-color: rgba(245, 158, 11, 0.45);
+}
+
+.status-success {
+	-fx-background-color: rgba(34, 197, 94, 0.20);
+	-fx-border-color: rgba(34, 197, 94, 0.45);
+}
+
+.status-danger {
+	-fx-background-color: rgba(239, 68, 68, 0.20);
+	-fx-border-color: rgba(239, 68, 68, 0.45);
+}
+
+.panel-block {
+	-fx-background-color: rgba(255,255,255,0.04);
+	-fx-background-radius: 20;
+	-fx-border-color: rgba(255,255,255,0.07);
+	-fx-border-radius: 20;
+	-fx-padding: 16;
+}
+
+.sudoku-board {
+	-fx-padding: 10;
+	-fx-background-radius: 24;
+	-fx-border-radius: 24;
+	-fx-border-width: 1;
+}
+
+.sudoku-cell {
+	-fx-min-width: 56px;
+	-fx-min-height: 56px;
+	-fx-max-width: 56px;
+	-fx-max-height: 56px;
+	-fx-cursor: hand;
+	-fx-font-size: 20px;
+	-fx-font-weight: 800;
+	-fx-background-radius: 0;
+	-fx-border-color: rgba(255,255,255,0.10);
+	-fx-border-width: 1;
+	-fx-text-fill: #f8fafc;
+	-fx-background-color: rgba(151, 153, 158, 0.82);
+}
+
+.cell-graphic {
+	-fx-padding: 4 5 4 5;
+}
+
+.cell-value {
+	-fx-text-fill: #f8fafc;
+	-fx-font-size: 20px;
+	-fx-font-weight: 800;
+}
+
+.cell-draft {
+	-fx-text-fill: #22d3ee;
+	-fx-font-size: 11px;
+	-fx-font-weight: 700;
+	-fx-padding: 2 0 0 2;
+	-fx-opacity: 0.95;
+}
+
+.fixed-cell .cell-value {
+	-fx-text-fill: #fbbf24;
+}
+
+.user-cell .cell-value {
+	-fx-text-fill: #f8fafc;
+}
+
+.selected-cell .cell-value {
+	-fx-text-fill: #0f172a;
+}
+
+.error-cell .cell-value {
+	-fx-text-fill: #fecaca;
+}
+
+.fixed-cell .cell-draft,
+.user-cell .cell-draft,
+.selected-cell .cell-draft,
+.error-cell .cell-draft {
+	-fx-text-fill: #67e8f9;
+}
+
+.sudoku-cell:hover {
+	-fx-background-color: rgba(30, 41, 64, 0.96);
+}
+
+.fixed-cell {
+	-fx-background-color: linear-gradient(to bottom, rgba(75, 85, 99, 0.90), rgba(41, 51, 70, 0.95));
+	-fx-text-fill: #fbbf24;
+}
+
+.user-cell {
+	-fx-background-color: linear-gradient(to bottom, rgba(34, 132, 255, 0.28), rgba(13, 45, 94, 0.92));
+	-fx-text-fill: #f8fafc;
+}
+
+.empty-cell {
+	-fx-background-color: rgba(9, 17, 35, 0.72);
+}
+
+.selected-cell {
+	-fx-background-color: linear-gradient(to bottom, rgba(245, 158, 11, 0.28), rgba(125, 74, 4, 0.95));
+	-fx-effect: dropshadow(gaussian, rgba(245, 158, 11, 0.35), 16, 0.2, 0, 0);
+}
+
+.error-cell {
+	-fx-background-color: linear-gradient(to bottom, rgba(239, 68, 68, 0.28), rgba(120, 21, 21, 0.95));
+	-fx-text-fill: #fecaca;
+}
+
+.button {
+	-fx-background-radius: 16;
+	-fx-border-radius: 16;
+	-fx-background-insets: 0;
+	-fx-border-width: 1;
+	-fx-background-color: rgba(15, 23, 42, 0.88);
+	-fx-border-color: rgba(255,255,255,0.12);
+	-fx-text-fill: #f8fafc;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 10, 0.15, 0, 2);
+	-fx-font-weight: 700;
+	-fx-padding: 10 14 10 14;
+	-fx-cursor: hand;
+}
+
+.button:hover {
+	-fx-background-color: rgba(30, 41, 59, 0.96);
+	-fx-border-color: rgba(125, 211, 252, 0.45);
+	-fx-text-fill: #f8fafc;
+	-fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.20), 14, 0.18, 0, 3);
+}
+
+.button:pressed {
+	-fx-background-color: rgba(15, 23, 42, 1.0);
+	-fx-translate-y: 1;
+}
+
+.primary-button {
+	-fx-background-color: linear-gradient(to bottom right, #f59e0b, #ea580c);
+	-fx-text-fill: #0f172a;
+	-fx-border-color: rgba(255,255,255,0.10);
+}
+
+.secondary-button {
+	-fx-background-color: rgba(14, 165, 233, 0.24);
+	-fx-text-fill: #000000;
+	-fx-border-color: rgba(125, 211, 252, 0.34);
+}
+
+.primary-button:hover, .secondary-button:hover{
+    -fx-text-fill: #ffffff;
+}
+
+.ghost-button {
+	-fx-background-color: rgba(168, 85, 247, 0.18);
+	-fx-text-fill: #000000;
+	-fx-border-color: rgba(216, 180, 254, 0.34);
+}
+
+.ghost-button:hover {
+	-fx-text-fill: #ffffff;
+	-fx-border-color: rgba(233, 213, 255, 0.60);
+}
+
+.danger-button {
+	-fx-background-color: linear-gradient(to bottom right, #ef4444, #b91c1c);
+	-fx-text-fill: #fff7ed;
+	-fx-border-color: rgba(255,255,255,0.10);
+}
+
+.text-field {
+	-fx-background-radius: 12;
+	-fx-border-radius: 12;
+	-fx-background-color: rgba(255,255,255,0.08);
+	-fx-text-fill: #f8fafc;
+	-fx-prompt-text-fill: #60a5fa;
+	-fx-border-color: rgba(255,255,255,0.12);
+	-fx-padding: 10 12 10 12;
+}
+
+.menu-bar {
+	-fx-background-color: rgba(6, 12, 24, 0.70);
+}
+
+.menu-bar .label {
+	-fx-text-fill: #f8fafc;
+}
+
+.context-menu {
+	-fx-background-color: #10192d;
+	-fx-border-color: rgba(255,255,255,0.10);
+}
+
+.menu-item .label {
+	-fx-text-fill: #e0f2fe;
+}

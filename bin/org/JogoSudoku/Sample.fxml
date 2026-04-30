@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="rootPane" prefHeight="760.0" prefWidth="1280.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.JogoSudoku.SampleController">
+	<top>
+		<VBox spacing="0.0" BorderPane.alignment="CENTER">
+			<children>
+				<MenuBar>
+				  <menus>
+					 <Menu text="Jogo">
+						<items>
+						  <MenuItem text="Novo jogo" onAction="#handleNewGame" />
+						  <MenuItem text="Reiniciar" onAction="#handleRestart" />
+						  <MenuItem text="Limpar números" onAction="#handleClear" />
+						  <SeparatorMenuItem />
+						  <MenuItem text="Sair" onAction="#handleExit" />
+						</items>
+					 </Menu>
+					 <Menu text="Ações">
+						<items>
+						  <MenuItem text="Colocar número" onAction="#handlePlace" />
+						  <MenuItem text="Remover número" onAction="#handleRemove" />
+						  <MenuItem text="Verificar jogo" onAction="#handleVerify" />
+						  <MenuItem text="Ver status" onAction="#handleStatus" />
+						  <MenuItem text="Finalizar jogo" onAction="#handleFinish" />
+						</items>
+					 </Menu>
+				  </menus>
+				</MenuBar>
+				<HBox alignment="CENTER_LEFT" spacing="18.0" styleClass="hero-bar">
+					<children>
+						<VBox spacing="6.0" HBox.hgrow="ALWAYS">
+							<children>
+								<Label text="Sudoku" styleClass="app-title" />
+								<Label fx:id="subtitleLabel" text="" wrapText="true" styleClass="app-subtitle" />
+							</children>
+						</VBox>
+						<VBox alignment="CENTER_RIGHT" spacing="6.0">
+							<children>
+								<Label text="Estado atual" styleClass="section-kicker" />
+								<Label fx:id="statusLabel" text="Carregando..." styleClass="status-pill" />
+							</children>
+						</VBox>
+					</children>
+					<padding>
+						<Insets bottom="14.0" left="24.0" right="24.0" top="14.0" />
+					</padding>
+				</HBox>
+			</children>
+		</VBox>
+	</top>
+	<center>
+		<HBox alignment="TOP_CENTER" spacing="20.0" styleClass="content-area">
+			<children>
+				<VBox spacing="10.0" styleClass="card board-card" HBox.hgrow="ALWAYS">
+					<children>
+						<HBox alignment="CENTER_LEFT" spacing="8.0">
+							<children>
+								<Label text="Tabuleiro" styleClass="section-title" />
+								<Label fx:id="puzzleNameLabel" text="Puzzle inicial" styleClass="section-badge" />
+							</children>
+						</HBox>
+						<GridPane fx:id="boardGrid" alignment="CENTER" hgap="0.0" vgap="0.0" styleClass="sudoku-board" />
+						<Label fx:id="selectionLabel" text="Selecione uma célula ou use os campos ao lado." wrapText="true" styleClass="hint-text" />
+					</children>
+					<padding>
+						<Insets bottom="14.0" left="18.0" right="18.0" top="14.0" />
+					</padding>
+				</VBox>
+				<VBox prefWidth="340.0" spacing="10.0" styleClass="card side-card" HBox.hgrow="NEVER">
+					<children>
+						<VBox spacing="6.0" styleClass="panel-block">
+							<children>
+								<Label text="Jogada" styleClass="section-title" />
+								<Label text="Use índices de 1 a 9. Os números fixos não podem ser alterados." wrapText="true" styleClass="hint-text" />
+								<CheckBox fx:id="draftModeCheck" text="Modo rascunho" />
+								<GridPane hgap="10.0" vgap="8.0">
+									<columnConstraints>
+										<ColumnConstraints minWidth="92.0" prefWidth="92.0" />
+										<ColumnConstraints hgrow="ALWAYS" />
+									</columnConstraints>
+									<children>
+										<Label text="Linha" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+										<TextField fx:id="rowField" promptText="1 a 9" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+										<Label text="Coluna" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+										<TextField fx:id="colField" promptText="1 a 9" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+										<Label text="Número" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+										<TextField fx:id="valueField" promptText="1 a 9" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+									</children>
+								</GridPane>
+							</children>
+						</VBox>
+						<HBox spacing="10.0">
+							<children>
+								<Button fx:id="placeButton" maxWidth="Infinity" onAction="#handlePlace" text="Colocar" styleClass="primary-button" HBox.hgrow="ALWAYS" />
+								<Button fx:id="removeButton" maxWidth="Infinity" onAction="#handleRemove" text="Remover" styleClass="secondary-button" HBox.hgrow="ALWAYS" />
+							</children>
+						</HBox>
+						<HBox spacing="10.0">
+							<children>
+								<Button fx:id="verifyButton" maxWidth="Infinity" onAction="#handleVerify" text="Verificar" styleClass="secondary-button" HBox.hgrow="ALWAYS" />
+								<Button fx:id="statusButton" maxWidth="Infinity" onAction="#handleStatus" text="Status" styleClass="secondary-button" HBox.hgrow="ALWAYS" />
+							</children>
+						</HBox>
+						<HBox spacing="10.0">
+							<children>
+								<Button fx:id="clearButton" maxWidth="Infinity" onAction="#handleClear" text="Limpar" styleClass="ghost-button" HBox.hgrow="ALWAYS" />
+								<Button fx:id="finishButton" maxWidth="Infinity" onAction="#handleFinish" text="Finalizar" styleClass="ghost-button" HBox.hgrow="ALWAYS" />
+							</children>
+						</HBox>
+						<VBox spacing="6.0" styleClass="panel-block">
+							<children>
+								<Label text="Partida" styleClass="section-title" />
+								<HBox spacing="10.0">
+									<children>
+										<Button fx:id="newGameButton" maxWidth="Infinity" onAction="#handleNewGame" text="Novo jogo" styleClass="primary-button" HBox.hgrow="ALWAYS" />
+										<Button fx:id="restartButton" maxWidth="Infinity" onAction="#handleRestart" text="Reiniciar" styleClass="secondary-button" HBox.hgrow="ALWAYS" />
+									</children>
+								</HBox>
+								<Button maxWidth="Infinity" onAction="#handleExit" text="Sair" styleClass="danger-button" />
+							</children>
+						</VBox>
+					</children>
+				</VBox>
+			</children>
+			<padding>
+				<Insets bottom="14.0" left="22.0" right="22.0" top="14.0" />
+			</padding>
+		</HBox>
+	</center>
+</BorderPane>

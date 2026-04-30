@@ -121,4 +121,4 @@ As imagens de referência do exercício estão na raiz do projeto:
 
 ## Licença
 
-Este projeto está licenciado sob a licença MIT. Veja o arquivo `LICENSE`.
+Este projeto está licenciado sob a licença MIT. Veja o arquivo `[LICENSE.md](LICENSE.md)`.

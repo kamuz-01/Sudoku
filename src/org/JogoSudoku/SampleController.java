@@ -1,6 +1,10 @@
 package org.JogoSudoku;
 
 import java.util.List;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -10,12 +14,15 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 public class SampleController {
 	private static final String[] PRESET_NAMES = {
@@ -52,10 +59,10 @@ public class SampleController {
 	private final Button[][] boardButtons = new Button[SudokuGame.SIZE][SudokuGame.SIZE];
 	private final Label[][] valueLabels = new Label[SudokuGame.SIZE][SudokuGame.SIZE];
 	private final Label[][] draftLabels = new Label[SudokuGame.SIZE][SudokuGame.SIZE];
+	private final boolean[][] lastConflicts = new boolean[SudokuGame.SIZE][SudokuGame.SIZE];
 	private final SudokuGame game = new SudokuGame();
 	private int selectedRow = -1;
 	private int selectedCol = -1;
-	private Scene scene;
 	private int presetIndex;
 	private int[][] currentInitialBoard;
 	private String currentPuzzleName = "Jogo inicial";
@@ -64,16 +71,13 @@ public class SampleController {
 	private void initialize() {
 		buildBoard();
 		applyNumericFilters();
-		subtitleLabel.setText("Use o menu para trocar de partida e os controles laterais para jogar.");
+		subtitleLabel.setText("Clique em uma célula para selecioná-la, depois digite um número.");
 		selectionLabel.setText("Nenhuma célula selecionada.");
 		draftModeCheck.setSelected(false);
-		draftModeCheck.selectedProperty().addListener((observable, oldValue, newValue) -> updateDraftModeHint(newValue));
-		updateDraftModeHint(false);
 		updateStatusPanel();
 	}
 
 	public void installSceneShortcuts(Scene scene) {
-		this.scene = scene;
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, this::handleSceneKeyPressed);
 	}
 
@@ -192,6 +196,7 @@ public class SampleController {
 	private void loadBoard(int[][] board, String puzzleName, boolean preserveSelection) {
 		currentInitialBoard = SudokuGame.copyBoard(board);
 		game.loadPuzzle(board);
+		resetConflictMemory();
 		currentPuzzleName = puzzleName;
 		puzzleNameLabel.setText(currentPuzzleName);
 		subtitleLabel.setText("Use os controles laterais para preencher, remover e verificar o Sudoku.");
@@ -222,8 +227,8 @@ public class SampleController {
 				StackPane.setAlignment(draftLabel, javafx.geometry.Pos.TOP_LEFT);
 				valueLabel.getStyleClass().add("cell-value");
 				draftLabel.getStyleClass().add("cell-draft");
-				cell.setMinSize(56, 56);
-				cell.setPrefSize(56, 56);
+				cell.setMinSize(44, 44);
+				cell.setPrefSize(44, 44);
 				cell.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 				cell.setFocusTraversable(false);
 				cell.setContentDisplay(javafx.scene.control.ContentDisplay.GRAPHIC_ONLY);
@@ -242,9 +247,9 @@ public class SampleController {
 		rowField.setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("[0-9]*") ? change : null));
 		colField.setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("[0-9]*") ? change : null));
 		valueField.setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("[0-9]*") ? change : null));
-		rowField.setPromptText("1 a 9");
-		colField.setPromptText("1 a 9");
-		valueField.setPromptText("1 a 9");
+		rowField.setPromptText("1–9");
+		colField.setPromptText("1–9");
+		valueField.setPromptText("1–9");
 	}
 
 	private void selectCell(int row, int col) {
@@ -324,7 +329,15 @@ public class SampleController {
 				String draftNote = game.getDraftNote(row, col);
 				valueLabel.setText(value == 0 ? "" : Integer.toString(value));
 				draftLabel.setText(value == 0 && !draftNote.isBlank() ? draftNote : "");
-				cell.getStyleClass().removeAll("fixed-cell", "user-cell", "empty-cell", "selected-cell", "error-cell");
+				cell.getStyleClass().removeAll(
+					"fixed-cell",
+					"user-cell",
+					"empty-cell",
+					"selected-cell",
+					"error-cell",
+					"peer-highlight",
+					"box-highlight"
+				);
 				if (game.isFixed(row, col)) {
 					cell.getStyleClass().add("fixed-cell");
 				} else if (value == 0) {
@@ -338,24 +351,122 @@ public class SampleController {
 				if (conflicts[row][col]) {
 					cell.getStyleClass().add("error-cell");
 				}
+				if (selectedRow >= 0 && selectedCol >= 0
+					&& !(row == selectedRow && col == selectedCol)
+					&& !conflicts[row][col]
+					&& !game.isFixed(row, col)) {
+					boolean sameRowOrCol = row == selectedRow || col == selectedCol;
+					boolean sameBox = (row / 3 == selectedRow / 3) && (col / 3 == selectedCol / 3);
+					if (sameRowOrCol) {
+						cell.getStyleClass().add("peer-highlight");
+					} else if (sameBox) {
+						cell.getStyleClass().add("box-highlight");
+					}
+				}
+				if (conflicts[row][col] && !lastConflicts[row][col]) {
+					playErrorPulse(cell);
+				}
+				lastConflicts[row][col] = conflicts[row][col];
 				cell.setStyle(buildCellBorderStyle(row, col));
 			}
 		}
 	}
 
 	private String buildCellBorderStyle(int row, int col) {
-		int top = row == 0 ? 3 : 1;
-		int right = col == SudokuGame.SIZE - 1 ? 3 : (col == 2 || col == 5 ? 5 : 1);
-		int bottom = row == SudokuGame.SIZE - 1 ? 3 : (row == 2 || row == 5 ? 5 : 1);
-		int left = col == 0 ? 3 : 1;
-		String thinColor = "rgba(255,255,255,0.10)";
-		String thickColor = "rgba(56,189,248,0.95)";
-		String topColor = row == 0 ? thickColor : thinColor;
-		String rightColor = col == SudokuGame.SIZE - 1 ? thickColor : (col == 2 || col == 5 ? thickColor : thinColor);
-		String bottomColor = row == SudokuGame.SIZE - 1 ? thickColor : (row == 2 || row == 5 ? thickColor : thinColor);
-		String leftColor = col == 0 ? thickColor : thinColor;
+		double thin = 0.5;
+		double blockHalf = 1.0;
+		double edge = thin;
+
+		double top = thin;
+		double right = thin;
+		double bottom = thin;
+		double left = thin;
+
+		if (row == 0) {
+			top = edge;
+		} else if (row == 3 || row == 6) {
+			top = blockHalf;
+		}
+		if (row == SudokuGame.SIZE - 1) {
+			bottom = edge;
+		} else if (row == 2 || row == 5) {
+			bottom = blockHalf;
+		}
+
+		if (col == 0) {
+			left = edge;
+		} else if (col == 3 || col == 6) {
+			left = blockHalf;
+		}
+		if (col == SudokuGame.SIZE - 1) {
+			right = edge;
+		} else if (col == 2 || col == 5) {
+			right = blockHalf;
+		}
+
+		String thinColor = "rgba(226,232,240,1.0)";
+		String blockColor = "rgba(148,163,184,1.0)";
+		String edgeColor = thinColor;
+
+		String topColor = top == edge ? edgeColor : (top == blockHalf ? blockColor : thinColor);
+		String rightColor = right == edge ? edgeColor : (right == blockHalf ? blockColor : thinColor);
+		String bottomColor = bottom == edge ? edgeColor : (bottom == blockHalf ? blockColor : thinColor);
+		String leftColor = left == edge ? edgeColor : (left == blockHalf ? blockColor : thinColor);
+
 		return "-fx-border-width: " + top + " " + right + " " + bottom + " " + left + ";"
-			+ "-fx-border-color: " + topColor + ", " + rightColor + ", " + bottomColor + ", " + leftColor + ";";
+			+ "-fx-border-color: " + topColor + " " + rightColor + " " + bottomColor + " " + leftColor + ";";
+	}
+
+	private void resetConflictMemory() {
+		for (int row = 0; row < SudokuGame.SIZE; row++) {
+			for (int col = 0; col < SudokuGame.SIZE; col++) {
+				lastConflicts[row][col] = false;
+			}
+		}
+	}
+
+	private void playErrorPulse(Button cell) {
+		Timeline existing = (Timeline) cell.getProperties().get("errorPulseTimeline");
+		if (existing != null) {
+			existing.stop();
+		}
+
+		var previousEffect = cell.getEffect();
+		DropShadow pulse = new DropShadow();
+		pulse.setRadius(0);
+		pulse.setSpread(0);
+		pulse.setColor(Color.rgb(239, 68, 68, 0.0));
+		pulse.setInput(previousEffect);
+		cell.setEffect(pulse);
+
+		Timeline timeline = new Timeline(
+			new KeyFrame(Duration.ZERO,
+				new KeyValue(pulse.radiusProperty(), 0, Interpolator.EASE_OUT),
+				new KeyValue(pulse.spreadProperty(), 0, Interpolator.EASE_OUT),
+				new KeyValue(pulse.colorProperty(), Color.rgb(239, 68, 68, 0.0), Interpolator.EASE_OUT)
+			),
+			new KeyFrame(Duration.millis(90),
+				new KeyValue(pulse.radiusProperty(), 18, Interpolator.EASE_OUT),
+				new KeyValue(pulse.spreadProperty(), 0.35, Interpolator.EASE_OUT),
+				new KeyValue(pulse.colorProperty(), Color.rgb(239, 68, 68, 0.85), Interpolator.EASE_OUT)
+			),
+			new KeyFrame(Duration.millis(220),
+				new KeyValue(pulse.radiusProperty(), 12, Interpolator.EASE_IN),
+				new KeyValue(pulse.spreadProperty(), 0.18, Interpolator.EASE_IN),
+				new KeyValue(pulse.colorProperty(), Color.rgb(239, 68, 68, 0.55), Interpolator.EASE_IN)
+			),
+			new KeyFrame(Duration.millis(420),
+				new KeyValue(pulse.radiusProperty(), 0, Interpolator.EASE_IN),
+				new KeyValue(pulse.spreadProperty(), 0, Interpolator.EASE_IN),
+				new KeyValue(pulse.colorProperty(), Color.rgb(239, 68, 68, 0.0), Interpolator.EASE_IN)
+			)
+		);
+		cell.getProperties().put("errorPulseTimeline", timeline);
+		timeline.setOnFinished(finishEvent -> {
+			cell.getProperties().remove("errorPulseTimeline");
+			cell.setEffect(previousEffect);
+		});
+		timeline.playFromStart();
 	}
 
 	private void updateStatusPanel() {
@@ -379,14 +490,6 @@ public class SampleController {
 			statusLabel.getStyleClass().add("status-warning");
 		}
 		refreshBoard();
-	}
-
-	private void updateDraftModeHint(boolean draftModeEnabled) {
-		if (draftModeEnabled) {
-			subtitleLabel.setText("Modo rascunho ativo: digite números no teclado para alternar candidatos no quadrinho selecionado. Backspace limpa o rascunho.");
-		} else {
-			subtitleLabel.setText("Modo número ativo: digite um número ou use Colocar para definir o valor final da célula. Backspace apaga o número informado.");
-		}
 	}
 
 	private ParsedInputs readInputs(boolean includeValue) {

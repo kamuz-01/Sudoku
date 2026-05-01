@@ -62,7 +62,11 @@
 						<VBox spacing="6.0">
 							<children>
 								<GridPane fx:id="boardGrid" alignment="CENTER" hgap="0.0" vgap="0.0" styleClass="sudoku-board" />
-								<Label fx:id="subtitleLabel" text="" wrapText="true" styleClass="hint" />
+								<Label fx:id="subtitleLabel" text="" wrapText="true" styleClass="hint">
+									<VBox.margin>
+										<Insets top="16.0" />
+									</VBox.margin>
+								</Label>
 								<Label fx:id="selectionLabel" text="Selecione uma célula ou use os campos ao lado." wrapText="true" styleClass="hint" />
 							</children>
 						</VBox>

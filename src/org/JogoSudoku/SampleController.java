@@ -74,7 +74,19 @@ public class SampleController {
 		subtitleLabel.setText("Clique em uma célula para selecioná-la, depois digite um número.");
 		selectionLabel.setText("Nenhuma célula selecionada.");
 		draftModeCheck.setSelected(false);
+		draftModeCheck.selectedProperty().addListener((observable, oldValue, newValue) -> updateDraftModeUi());
+		updateDraftModeUi();
 		updateStatusPanel();
+	}
+
+	private void updateDraftModeUi() {
+		boolean draftMode = draftModeCheck != null && draftModeCheck.isSelected();
+		if (placeButton != null) {
+			placeButton.setText(draftMode ? "Rascunhar" : "Colocar");
+		}
+		if (removeButton != null) {
+			removeButton.setText(draftMode ? "Limpar" : "Remover");
+		}
 	}
 
 	public void installSceneShortcuts(Scene scene) {
@@ -227,8 +239,8 @@ public class SampleController {
 				StackPane.setAlignment(draftLabel, javafx.geometry.Pos.TOP_LEFT);
 				valueLabel.getStyleClass().add("cell-value");
 				draftLabel.getStyleClass().add("cell-draft");
-				cell.setMinSize(44, 44);
-				cell.setPrefSize(44, 44);
+				cell.setMinSize(48, 48);
+				cell.setPrefSize(48, 48);
 				cell.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 				cell.setFocusTraversable(false);
 				cell.setContentDisplay(javafx.scene.control.ContentDisplay.GRAPHIC_ONLY);
